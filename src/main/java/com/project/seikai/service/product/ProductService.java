@@ -1,6 +1,7 @@
 package com.project.seikai.service.product;
 
 import com.project.seikai.exceptions.ProductNotFoundException;
+import com.project.seikai.exceptions.ResourceNotFoundException;
 import com.project.seikai.model.Category;
 import com.project.seikai.model.Product;
 import com.project.seikai.repository.CategoryRepository;
@@ -46,13 +47,13 @@ public class ProductService implements IProductService{
     @Override
     public Product getProductById(Long id) {
         return productRepository.findById(id).
-                orElseThrow(()->new ProductNotFoundException("Product not found!"));
+                orElseThrow(()->new ResourceNotFoundException("Product not found!"));
     }
 
     @Override
     public void deleteProductById(Long id) {
             productRepository.findById(id).ifPresentOrElse(productRepository::delete,
-                    () -> {throw new ProductNotFoundException("Product not found!");});
+                    () -> {throw new ResourceNotFoundException("Product not found!");});
     }
 
     @Override
