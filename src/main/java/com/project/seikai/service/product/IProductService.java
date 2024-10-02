@@ -1,5 +1,6 @@
 package com.project.seikai.service.product;
 
+import com.project.seikai.dto.ProductDto;
 import com.project.seikai.model.Product;
 import com.project.seikai.request.AddProductRequest;
 import com.project.seikai.request.ProductUpdateRequest;
@@ -23,4 +24,7 @@ public interface IProductService {
     Long countProductsByBrandAndName(String brand , String name);
 
 
+    List<ProductDto> getConvertedProducts(List<Product> products);
+
+    ProductDto convertToDto(Product product);
 }

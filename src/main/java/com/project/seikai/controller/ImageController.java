@@ -4,6 +4,7 @@ import com.project.seikai.dto.ImageDto;
 import com.project.seikai.exceptions.ResourceNotFoundException;
 import com.project.seikai.model.Image;
 import com.project.seikai.response.ApiResponse;
+import com.project.seikai.service.image.IImageService;
 import com.project.seikai.service.image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
@@ -25,7 +26,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RestController
 @RequestMapping("${api.prefix}/images")
 public class ImageController {
-    private final ImageService imageService;
+    private final IImageService imageService;
 
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse> saveImages(@RequestParam List<MultipartFile> files,@RequestParam Long productId){

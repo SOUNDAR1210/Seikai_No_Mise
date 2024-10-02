@@ -1,14 +1,19 @@
 package com.project.seikai.service.product;
 
+import com.project.seikai.dto.ImageDto;
+import com.project.seikai.dto.ProductDto;
 import com.project.seikai.exceptions.ProductNotFoundException;
 import com.project.seikai.exceptions.ResourceNotFoundException;
 import com.project.seikai.model.Category;
+import com.project.seikai.model.Image;
 import com.project.seikai.model.Product;
 import com.project.seikai.repository.CategoryRepository;
+import com.project.seikai.repository.ImageRepository;
 import com.project.seikai.repository.ProductRepository;
 import com.project.seikai.request.AddProductRequest;
 import com.project.seikai.request.ProductUpdateRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +25,9 @@ public class ProductService implements IProductService{
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ModelMapper modelMapper;
+    private final ImageRepository imageRepository;
+
     @Override
     public Product addProduct(AddProductRequest request) {
            //check if the category is found in the DB
@@ -47,7 +55,7 @@ public class ProductService implements IProductService{
     @Override
     public Product getProductById(Long id) {
         return productRepository.findById(id).
-                orElseThrow(()->new ResourceNotFoundException("Product not found!"));
+                orElseThrow(()->new ResourceNotFoundException("Product not found by the given id!"));
     }
 
     @Override
@@ -98,6 +106,7 @@ public class ProductService implements IProductService{
 
     @Override
     public List<Product> getProductsByName(String name) {
+
         return productRepository.findByName(name);
     }
 
@@ -109,5 +118,23 @@ public class ProductService implements IProductService{
     @Override
     public Long countProductsByBrandAndName(String brand, String name) {
         return productRepository.countByBrandAndName(brand,name);
+    }
+
+    @Override
+    public List<ProductDto> getConvertedProducts(List<Product> products){
+        return products.stream()
+                .map(this::convertToDto)
+                .toList();
+    }
+
+    @Override
+    public ProductDto convertToDto(Product product){
+        ProductDto productDto = modelMapper.map(product, ProductDto.class);
+        List<Image> images = imageRepository.findByProductId(product.getId());
+        List<ImageDto> imageDtos = images.stream()
+                .map(image -> modelMapper.map(image, ImageDto.class))
+                .toList();
+        productDto.setImages(imageDtos);
+        return productDto;
     }
 }
